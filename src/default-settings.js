@@ -1,9 +1,35 @@
 const settings = {
-    //Addition settings for this template
-    
+        //Custom settings for this template
+        start_var:"start_date",
+        stop_var:"stop_date",
+        status_var:"status",
+        id_vars:["id"],
+        interval:"day", //valid d3.time.interval (e.g. "day", "week", "month")
+        date_format:"%m/%d/%y",
 
-    //Standard webcharts settings
-    
+        //standard webcharts settings
+        "max_width":1000,
+        "aspect":2,
+        "y":{
+            "label":"Count",
+            "type":"linear",
+            "column":"count",
+            "behavior":"flex"
+        },
+        "x":{
+            "type":"time",
+            "column":"date"
+        },
+        "marks":[
+            {
+                "type":"line",
+                "per":["key"],
+                "summarizeY":"sum"
+            }
+        ],
+        "gridlines":"x",
+        "color_by":"key",
+        "interpolate":"step-before"
 };
 
 // Replicate settings in multiple places in the settings object
@@ -14,7 +40,7 @@ export function syncSettings(settings){
 
 // Default Control objects
 export const controlInputs = [ 
-	//example:  {label: "Severity", type: "subsetter", multiple: true},
+	{type: "subsetter", value_col: "key", label: "Filter by Period", multiple:true},
 ];
 
 // Map values from settings to control inputs
