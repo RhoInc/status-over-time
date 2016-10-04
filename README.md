@@ -1,5 +1,5 @@
 # Status Over Time
-The status over time chart shows the number of events that are occurring over time for a generic event status. 
+The status-over-time chart shows the number of events that are occurring over time grouped by a categorical status variable. 
 
 **Sample image goes here**
 
