@@ -6,6 +6,9 @@ const settings = {
         id_vars:["id"],
         interval:"day", //valid d3.time.interval (e.g. "day", "week", "month")
         date_format:"%m/%d/%y",
+        cumulative:false,
+        display:"line", //"line" or "bar"
+
 
         //standard webcharts settings
         "max_width":1000,
@@ -41,7 +44,9 @@ export function syncSettings(settings){
 // Default Control objects
 export const controlInputs = [ 
 	{type: "subsetter", value_col: "key", label: "Filter by Period", multiple:true},
+    {type: "dropdown", option:"y.column", label: "Cumulative?",values:["count","count_cumulative"]}
 ];
+
 
 // Map values from settings to control inputs
 export function syncControlInputs(controlInputs, settings){

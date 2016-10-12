@@ -11,6 +11,8 @@ var statusOverTime = (function (webcharts) {
 		id_vars: ["id"],
 		interval: "day", //valid d3.time.interval (e.g. "day", "week", "month")
 		date_format: "%m/%d/%y",
+		cumulative: false,
+		display: "line", //"line" or "bar"
 
 		//standard webcharts settings
 		"max_width": 1000,
@@ -42,7 +44,7 @@ var statusOverTime = (function (webcharts) {
 	}
 
 	// Default Control objects
-	var controlInputs = [{ type: "subsetter", value_col: "key", label: "Filter by Period", multiple: true }];
+	var controlInputs = [{ type: "subsetter", value_col: "key", label: "Filter by Period", multiple: true }, { type: "dropdown", option: "y.column", label: "Cumulative?", values: ["count", "count_cumulative"] }];
 
 	// Map values from settings to control inputs
 	function syncControlInputs(controlInputs, settings) {
@@ -65,10 +67,26 @@ var statusOverTime = (function (webcharts) {
 			return d[statusVar];
 		}).entries(matches);
 
+		totals.overall = d3.sum(totals, function (d) {
+			return d.values.length;
+		});
+		totals.count_cumulative = 0;
+		totals.percent_cumulative = 0;
+		totals.sort(function (a, b) {
+			return a.key < b.key ? -1 : b.key < a.key ? 1 : 0;
+		});
 		totals.forEach(function (d) {
 			d.count = d.values.length;
+			d.percent = d.count / totals.overall;
 			d.date = date;
+
+			totals.count_cumulative = totals.count_cumulative + d.count;
+			totals.percent_cumulative = totals.percent_cumulative + d.percent;
+
+			d.count_cumulative = totals.count_cumulative;
+			d.percent_cumulative = totals.percent_cumulative;
 		});
+
 		return totals;
 	}
 
@@ -76,6 +94,7 @@ var statusOverTime = (function (webcharts) {
 	function getStatusByDate(rawData, dateArray, statusVar) {
 		var allData = [];
 		dateArray.forEach(function (date, i) {
+			//get status information for each time cut
 			var statusCut = getStatusCut(rawData, statusVar, date);
 			allData = d3.merge([allData, statusCut]);
 		});

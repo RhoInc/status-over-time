@@ -4,7 +4,8 @@ import getStatusCut from './getStatusCut';
 export default function getStatusByDate(rawData, dateArray, statusVar){
     var allData = []
     dateArray.forEach(function(date,i){
-        var statusCut = getStatusCut(rawData, statusVar, date)
+    	//get status information for each time cut
+        var statusCut = getStatusCut(rawData, statusVar, date)    
         allData = d3.merge([allData, statusCut])
     })
 
