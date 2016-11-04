@@ -2,7 +2,7 @@
   "name": "status-over-time",
   "version": "0.1.1",
   "description": "The status over time chart shows the number of events that are occurring over time ",
-  "main": "./build/statusOverTime-chf.js",
+  "main": "./build/statusOverTime.js",
   "scripts": {
     "build": "rollup -c ./scripts/rollup.wrapper.config.js | babel > ./build/statusOverTime.js",
     "build-chf": "rollup -c ./scripts/rollup.chf.config.js  > ./build/statusOverTime-chf.js"

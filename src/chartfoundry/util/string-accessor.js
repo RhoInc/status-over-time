@@ -1,5 +1,5 @@
 export default function(o, s, v) {
-	//adapted from http://jsfiddle.net/alnitak/hEsys/
+  //Adapted from http://jsfiddle.net/alnitak/hEsys/
     s = s.replace(/\[(\w+)\]/g, '.$1');
     s = s.replace(/^\./, '');           
     var a = s.split('.');
