@@ -140,6 +140,41 @@ var statusOverTime = function (webcharts) {
 
     function onLayout() {
         var context = this;
+
+        //Select status filter.
+        var statusFilter = d3.selectAll('.control-group').filter(function () {
+            return d3.select(this).select('.control-label').text() === 'Filter by Status';
+        });
+
+        //Modify status filter's fucntionality.
+        statusFilter.on('change', () => {
+            //Capture currently selected study statuses.
+            var statuses = [];
+            statusFilter.selectAll('option').filter(function () {
+                return d3.select(this).property('selected');
+            }).each(d => statuses.push(d));
+
+            //Filter raw data on currently selected study statuses.
+            var super_raw_data = context.super_raw_data.filter(d => statuses.indexOf(d[context.config.status_var]) > -1);
+
+            //Recalculate first and last date in the data and store them as settings.
+            var startDates = super_raw_data.map(d => d.start_date);
+            var stopDates = super_raw_data.map(d => d.stop_date);
+            var allDates = d3.merge([startDates, stopDates]);
+
+            var sortedDates = allDates.sort(function (a, b) {
+                return a > b ? 1 : a < b ? -1 : 0;
+            });
+
+            var minDate = sortedDates[0];
+            var maxDate = sortedDates[sortedDates.length - 1];
+
+            //Get list of dates where we want to calculate statuses.
+            var dateArray = d3.time[context.config.interval].range(minDate, maxDate);
+
+            var raw_data = getStatusByDate(super_raw_data, dateArray, context.config);
+            context.draw(raw_data);
+        });
     }
 
     function onDataTransform() {
@@ -163,7 +198,6 @@ var statusOverTime = function (webcharts) {
         x_mark.append('line').attr('x1', 0).attr('x2', 0).attr('y1', 0).attr('y2', 0).attr('stroke', '#ddd');
         x_mark.append('text').attr({ 'id': 'dateText', 'x': 0, 'y': -this.plot_height, 'dx': '.5em', 'dy': '.5em' });
         x_mark.append('text').attr({ 'id': 'countText', 'x': 0, 'y': -this.plot_height, 'dx': '.5em', 'dy': '.5em' });
-        x_mark.select('line').attr('y1', -this.plot_height);
 
         //var frequencyType = d3.selectAll('.control-group')
         //    .filter(function() {
@@ -182,11 +216,12 @@ var statusOverTime = function (webcharts) {
             context.svg.selectAll('.hover-item').style('display', 'none');
             var leg_items = context.legend.selectAll('.legend-item');
             leg_items.select('.legend-color-block').style('display', 'inline-block');
-            leg_items.select('.legend-mark-text').style('display', 'none');
+            leg_items.select('.legend-mark-text').style('display', 'none').text('0');
         });
 
         function mousemove() {
             var mouse = this;
+            x_mark.select('line').attr('y1', -context.plot_height);
 
             context.current_data.forEach(function (e) {
                 var line_data = e.values;

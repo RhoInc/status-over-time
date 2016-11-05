@@ -21,8 +21,6 @@ export default function onResize() {
         .attr({'id': 'dateText', 'x': 0, 'y': -this.plot_height, 'dx': '.5em', 'dy': '.5em'});
     x_mark.append('text')
         .attr({'id': 'countText', 'x': 0, 'y': -this.plot_height, 'dx': '.5em', 'dy': '.5em'});
-    x_mark.select('line')
-        .attr('y1', -this.plot_height);
 
     //var frequencyType = d3.selectAll('.control-group')
     //    .filter(function() {
@@ -51,11 +49,14 @@ export default function onResize() {
             leg_items.select('.legend-color-block')
                 .style('display', 'inline-block');
             leg_items.select('.legend-mark-text')
-                .style('display', 'none');
+                .style('display', 'none')
+                .text('0');
         });
 
     function mousemove() {
         var mouse = this;
+        x_mark.select('line')
+            .attr('y1', -context.plot_height);
 
         context.current_data
             .forEach(function(e) {
